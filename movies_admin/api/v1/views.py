@@ -68,7 +68,5 @@ class MoviesDetailApi(MoviesApiMixin, BaseDetailView):
             raise Http404(f"No film with id={filmwork_id} ")
 
     def get_context_data(self, **kwargs):
-        context = {}
         if self.object:
-            context["object"] = self.object
-        return context
+            return self.object
