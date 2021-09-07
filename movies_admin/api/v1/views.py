@@ -1,12 +1,10 @@
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.core.paginator import Paginator, Page
+from django.core.paginator import Page, Paginator
 from django.db.models import Q
-from django.http import JsonResponse
-from django.views.generic.list import BaseListView
-from django.views.generic.detail import BaseDetailView
 from django.db.models.query import QuerySet
-from django.core import serializers
-
+from django.http import Http404, JsonResponse
+from django.views.generic.detail import BaseDetailView
+from django.views.generic.list import BaseListView
 from movies.models import FilmWork
 
 
@@ -62,5 +60,15 @@ class MoviesList(MoviesApiMixin, BaseListView):
 
 
 class MoviesDetailApi(MoviesApiMixin, BaseDetailView):
+    def get_object(self, queryset=None):
+        filmwork_id = self.kwargs["pk"]
+        try:
+            return self.get_queryset().filter(id=filmwork_id).get()
+        except FilmWork.DoesNotExist:
+            raise Http404(f"No film with id={filmwork_id} ")
+
     def get_context_data(self, **kwargs):
-        return  # Словарь с данными объекта
+        context = {}
+        if self.object:
+            context["object"] = self.object
+        return context

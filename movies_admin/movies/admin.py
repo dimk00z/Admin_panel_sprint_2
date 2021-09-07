@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Genre, Person, FilmWork, PersonFilmWork, GenreFilmWork
+
+from .models import FilmWork, Genre, GenreFilmWork, Person, PersonFilmWork
 
 
 class PersonInLineAdmin(admin.TabularInline):
