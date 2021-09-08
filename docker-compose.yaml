@@ -1,0 +1,39 @@
+version: '3'
+services:
+  db:
+    container_name: postges_movie_db
+    image: postgres:13.4
+    restart: unless-stopped
+    expose: 
+      - '5432'
+    volumes: 
+      - ./postgres:/var/lib/postgresql/data
+    env_file:
+      - ./movies_admin/.env
+
+  movie_admin:
+    container_name: movie_admin_panel
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - "8000"
+    env_file: 
+      - ./movies_admin/.env
+    volumes: 
+      - ./static:/code/static/
+    depends_on: 
+      - db
+
+  nginx:
+    image: nginx:1.21.1
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - movie_admin
+    ports:
+      - "80:80"
