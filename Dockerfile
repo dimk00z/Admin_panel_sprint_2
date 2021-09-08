@@ -12,4 +12,5 @@ COPY ./movies_admin .
 
 RUN python manage.py collectstatic --noinput
 
-CMD gunicorn config.wsgi:application --bind 0.0.0.0:8000
+# CMD gunicorn config.wsgi:application --bind 0.0.0.0:8000
+ENTRYPOINT ["gunicorn", "config.wsgi", "--log-level", "debug", "--bind", "0.0.0.0:8000", "-w", "3"]

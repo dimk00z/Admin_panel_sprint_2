@@ -6,7 +6,7 @@ docker-compose*
 README.md
 LICENSE
 .vscode
-env
+.env
 *.pyc
 *.pyo
 *.mo
@@ -14,4 +14,3 @@ env
 __pycache__
 .cache
 postgres
-static
