@@ -15,7 +15,7 @@ Queryset собирается по фильмам с prefetch_related по "pers
 1. `postges_movie_db` - контейнер для развертывания postgres. В текущих настройках файлы базы данных связаны с путем `../postgres`
 
 2. `movies_admin` - контейнер с бэкэндом джанги на основе [Dockerfile_django](https://github.com/dimk00z/Admin_panel_sprint_2/blob/main/Dockerfile_django). При развертывании в образ устанавливаются зависимости [production.txt](https://github.com/dimk00z/Admin_panel_sprint_2/blob/main/movies_admin/requirements/production.txt). Сервер работает через `gunicorn`.
-3. `nginx` - nginx вебсервер для отдачи статики и проброса с movies_admin:8000.
+3. `nginx` - контейнер с nginx вебсервером на основе [Dockerfile_nginx](https://github.com/dimk00z/Admin_panel_sprint_2/blob/main/nginx/Dockerfile_nginx) для отдачи статики и проброса с movies_admin:8000.
 
 ## Запуск проекта
 
