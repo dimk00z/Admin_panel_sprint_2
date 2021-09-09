@@ -12,7 +12,7 @@ RUN pip install --upgrade pip
 COPY movies_admin/requirements/*.txt requirements/
 
 RUN pip install -r requirements/production.txt
-RUN pip install -r requirements/dev.txt
+# RUN pip install -r requirements/dev.txt
 
 
 COPY ./movies_admin .
