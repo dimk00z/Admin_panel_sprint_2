@@ -18,15 +18,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_django
-    # command: python manage.py runserver 0.0.0.0:8000
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     restart: unless-stopped
     expose:
       - "8000"
     env_file: 
       - ./movies_admin/.env
-    volumes: 
-      - ./movies_admin/static:/code/static
+    volumes:
+      - static_volume:/code/staticfiles
     depends_on: 
       - postges_movie_db
 
@@ -34,21 +33,12 @@ services:
     build: 
       context: ./nginx
       dockerfile: Dockerfile_nginx
+    volumes:
+      - static_volume:/code/staticfiles
     restart: unless-stopped
     ports:
       - 80:80
     depends_on:
       - movies_admin
-      
-  # nginx:
-  #   image: nginx:1.21.1
-  #   container_name: nginx
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-  #     - ./nginx/conf.d:/etc/nginx/conf.d:ro
-  #     - ./movies_admin/static:/code/static
-  #   depends_on:
-  #     - movies_admin
-  #   ports:
-  #     - "80:80"
+volumes:
+  static_volume:   
