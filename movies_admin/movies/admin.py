@@ -46,7 +46,6 @@ class FilmWorkAdmin(admin.ModelAdmin):
         "file_path",
         "rating",
     )
-    # raw_id_fields = ("genres", "persons")
     inlines = [
         PersonInLineAdmin,
         GenreInLineAdmin,
