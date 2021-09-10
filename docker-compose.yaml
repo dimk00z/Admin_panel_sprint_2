@@ -41,4 +41,4 @@ services:
     depends_on:
       - movies_admin
 volumes:
-  static_volume:   
+  static_volume:
