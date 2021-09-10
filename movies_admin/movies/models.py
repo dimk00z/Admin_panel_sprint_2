@@ -59,6 +59,7 @@ class FilmWork(TimeStampedMixin):
 
 class Genre(TimeStampedMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     name = models.CharField(_("title"), unique=True, max_length=100)
     description = models.TextField(_("description"), blank=True, null=True)
 
@@ -74,6 +75,7 @@ class Genre(TimeStampedMixin):
 
 class GenreFilmWork(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     film_work = models.ForeignKey(
         FilmWork,
         db_column="film_work_id",
@@ -101,6 +103,7 @@ class GenreFilmWork(models.Model):
 
 class Person(TimeStampedMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     full_name = models.CharField(_("full_name"), max_length=200)
     birth_date = models.DateField(_("birth_date"), blank=True, null=True)
 
@@ -116,6 +119,7 @@ class Person(TimeStampedMixin):
 
 class PersonFilmWork(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     role = models.CharField(_("role"), choices=RoleType.choices, max_length=50)
     film_work = models.ForeignKey(
         FilmWork,
