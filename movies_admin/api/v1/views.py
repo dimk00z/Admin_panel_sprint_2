@@ -1,6 +1,9 @@
+from typing import List
+from uuid import UUID
+
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.paginator import Page, Paginator
-from django.db.models import Q
+from django.db.models import Model, Q
 from django.db.models.query import QuerySet
 from django.http import Http404, JsonResponse
 from django.views.generic.detail import BaseDetailView
@@ -9,8 +12,8 @@ from movies.models import FilmWork
 
 
 class MoviesApiMixin:
-    model = FilmWork
-    http_method_names = ["get"]
+    model: Model = FilmWork
+    http_method_names: List[str] = ["get"]
 
     def get_queryset(self):
         films: QuerySet = FilmWork.objects.prefetch_related(
@@ -40,16 +43,16 @@ class MoviesApiMixin:
 
 
 class MoviesList(MoviesApiMixin, BaseListView):
-    paginate_by = 50
-    ordering = "title"
+    paginate_by: int = 50
+    ordering: str = "title"
 
     def get_context_data(self, *, object_list=None, **kwargs):
 
-        context = super().get_context_data()
+        context: dict = super().get_context_data()
         paginator: Paginator = context["paginator"]
         page: Page = context["page_obj"]
         paginated_films: QuerySet = context["page_obj"]
-        result = {
+        result: dict = {
             "count": paginator.count,
             "total_pages": paginator.num_pages,
             "prev": page.previous_page_number() if page.has_previous() else None,
@@ -61,7 +64,7 @@ class MoviesList(MoviesApiMixin, BaseListView):
 
 class MoviesDetailApi(MoviesApiMixin, BaseDetailView):
     def get_object(self, queryset=None):
-        filmwork_id = self.kwargs["pk"]
+        filmwork_id: UUID = self.kwargs["pk"]
         try:
             return self.get_queryset().filter(id=filmwork_id).get()
         except FilmWork.DoesNotExist:
