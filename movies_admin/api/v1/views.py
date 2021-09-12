@@ -15,7 +15,7 @@ class MoviesApiMixin:
     model: Model = FilmWork
     http_method_names: List[str] = ["get"]
 
-    def agregare_person(self, role) -> ArrayAgg:
+    def aggregate_person(self, role) -> ArrayAgg:
         return ArrayAgg(
             "persons__person__full_name",
             filter=Q(persons__role__exact=role),
@@ -27,9 +27,9 @@ class MoviesApiMixin:
             "persons", "film_genres"
         ).annotate(
             genres=ArrayAgg("film_genres__genre__name", distinct=True),
-            actors=self.agregare_person(role="actor"),
-            directors=self.agregare_person(role="director"),
-            writers=self.agregare_person(role="writer"),
+            actors=self.aggregate_person(role="actor"),
+            directors=self.aggregate_person(role="director"),
+            writers=self.aggregate_person(role="writer"),
         )
         return films.values()
 
