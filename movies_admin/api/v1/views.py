@@ -23,18 +23,20 @@ class MoviesApiMixin:
         )
 
     def get_queryset(self):
-        films: QuerySet = FilmWork.objects.prefetch_related(
-            "persons", "film_genres"
-        ).annotate(
-            genres=ArrayAgg("film_genres__genre__name", distinct=True),
-            actors=self.aggregate_person(role="actor"),
-            directors=self.aggregate_person(role="director"),
-            writers=self.aggregate_person(role="writer"),
+        films: QuerySet = (
+            FilmWork.objects.prefetch_related("persons", "film_genres")
+            .values()
+            .annotate(
+                genres=ArrayAgg("film_genres__genre__name", distinct=True),
+                actors=self.aggregate_person(role="actor"),
+                directors=self.aggregate_person(role="director"),
+                writers=self.aggregate_person(role="writer"),
+            )
         )
-        return films.values()
+        return films
 
     def render_to_response(self, context, **response_kwargs):
-        return JsonResponse(context, safe=False)
+        return JsonResponse(context, json_dumps_params={"indent": " "}, safe=False)
 
 
 class MoviesList(MoviesApiMixin, BaseListView):
@@ -42,8 +44,8 @@ class MoviesList(MoviesApiMixin, BaseListView):
     ordering: str = "title"
 
     def get_context_data(self, *, object_list=None, **kwargs):
-
         context: dict = super().get_context_data()
+
         paginator: Paginator = context["paginator"]
         page: Page = context["page_obj"]
         paginated_films: QuerySet = context["page_obj"]
@@ -58,13 +60,8 @@ class MoviesList(MoviesApiMixin, BaseListView):
 
 
 class MoviesDetailApi(MoviesApiMixin, BaseDetailView):
-    def get_object(self, queryset=None):
-        filmwork_id: UUID = self.kwargs["pk"]
-        try:
-            return self.get_queryset().filter(id=filmwork_id).get()
-        except FilmWork.DoesNotExist:
-            raise Http404(f"No film with id={filmwork_id} ")
+
+    pk_url_kwarg = "id"
 
     def get_context_data(self, **kwargs):
-        if self.object:
-            return self.object
+        return super().get_context_data().get("object")
