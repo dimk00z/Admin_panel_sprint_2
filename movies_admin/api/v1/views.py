@@ -15,26 +15,21 @@ class MoviesApiMixin:
     model: Model = FilmWork
     http_method_names: List[str] = ["get"]
 
+    def agregare_person(self, role) -> ArrayAgg:
+        return ArrayAgg(
+            "persons__person__full_name",
+            filter=Q(persons__role__exact=role),
+            distinct=True,
+        )
+
     def get_queryset(self):
         films: QuerySet = FilmWork.objects.prefetch_related(
             "persons", "film_genres"
         ).annotate(
             genres=ArrayAgg("film_genres__genre__name", distinct=True),
-            actors=ArrayAgg(
-                "persons__person__full_name",
-                filter=Q(persons__role__exact="actor"),
-                distinct=True,
-            ),
-            directors=ArrayAgg(
-                "persons__person__full_name",
-                filter=Q(persons__role__exact="director"),
-                distinct=True,
-            ),
-            writers=ArrayAgg(
-                "persons__person__full_name",
-                filter=Q(persons__role__exact="writer"),
-                distinct=True,
-            ),
+            actors=self.agregare_person(role="actor"),
+            directors=self.agregare_person(role="director"),
+            writers=self.agregare_person(role="writer"),
         )
         return films.values()
 
